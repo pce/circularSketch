@@ -55,7 +55,9 @@ void CircularSequencer::draw() {
             float x = center.x + cos(angle) * (radius + trackIndex * 15); // Slightly offset each track
             float y = center.y + sin(angle) * (radius + trackIndex * 15);
 
-            if (tracks[trackIndex].steps[step]) {
+            if (step == currentStep) {
+                     ofSetColor(ofColor::yellow); // Use a lighter color for the current step
+            } else if (tracks[trackIndex].steps[step]) {
                 ofSetColor(ofColor::red); // Highlight active steps
             } else {
                 ofSetColor(ofColor::white);
