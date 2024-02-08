@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include "ofMain.h"
+#include "ofxGui.h"
 
 class CircularSequencer {
 public:
@@ -32,12 +33,14 @@ public:
     void mousePressed(int x, int y); // To handle mouse clicks
 
     
-    
+    void updateRhythm(int track, int k, int n);
     void setBPM(int bpm);
 
 private:
     int bpm = 130; // Default BPM
     std::vector<ofSoundPlayer*> sounds;
+    // storage for generated rhythms
+    std::vector<std::vector<bool>> rhythms;
     
     bool isRunning = false; // Run state of the sequencer
     float stepDuration = 0.5f; // Duration of each step in seconds
@@ -50,6 +53,9 @@ private:
     int totalSteps;
     ofPoint center;
     float radius;
+    
+    // Euclidean rhythm generator
+    static std::vector<bool> generateEuclideanRhythm(int k, int n);
 };
 
 #endif /* CircularSequencer_hpp */

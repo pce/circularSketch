@@ -31,10 +31,35 @@ void ofApp::setup(){
     for (int i = 2; i < 16; i += 2) {
         beatSequencer.setStep(2, i, true);
     }
+        
+    gui.setup("Euclidean Rhythms");
+    gui.add(kickK.setup("Kick K", 1, 1, 16)); // Default value, min, max
+    gui.add(kickN.setup("Kick N", 8, 1, 16));
+    gui.add(snareK.setup("Snare K", 1, 1, 16));
+    gui.add(snareN.setup("Snare N", 8, 1, 16));
+    gui.add(hihatK.setup("HiHat K", 1, 1, 16));
+    gui.add(hihatN.setup("HiHat N", 8, 1, 16));
+    
+    // Euclidean parameters
+    kickK.addListener(this, &ofApp::onKickKChange);
+    kickN.addListener(this, &ofApp::onKickNChange);
+    snareK.addListener(this, &ofApp::onSnareKChange);
+    snareN.addListener(this, &ofApp::onSnareNChange);
+    hihatK.addListener(this, &ofApp::onHihatKChange);
+    hihatN.addListener(this, &ofApp::onHihatNChange);
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
+    float currentTime = ofGetElapsedTimef();
+    if (updatePending && currentTime - lastSliderAdjustmentTime > debounceDelay) {
+        // Perform rhythm updates for all tracks
+        beatSequencer.updateRhythm(0, kickK, kickN); // For kick
+        beatSequencer.updateRhythm(1, snareK, snareN); // For snare
+        beatSequencer.updateRhythm(2, hihatK, hihatN); // For hi-hat
+
+        updatePending = false; // Reset the flag
+    }
     beatSequencer.update();
 }
 
@@ -44,12 +69,51 @@ void ofApp::draw(){
     chordSequencer.draw();
     bassSequencer.draw();
     melodySequencer.draw();
+    
+    gui.draw();
 }
 
 //--------------------------------------------------------------
 void ofApp::exit(){
-
+    kickK.removeListener(this, &ofApp::onKickKChange);
+    kickN.removeListener(this, &ofApp::onKickNChange);
+    snareK.removeListener(this, &ofApp::onSnareKChange);
+    snareN.removeListener(this, &ofApp::onSnareKChange);
+    hihatK.removeListener(this, &ofApp::onHihatKChange);
+    hihatN.removeListener(this, &ofApp::onHihatNChange);
 }
+
+//--------------------------------------------------------------
+
+void ofApp::onSliderChange() {
+    lastSliderAdjustmentTime = ofGetElapsedTimef();
+    updatePending = true;
+}
+
+void ofApp::onKickKChange(int& k) {
+    onSliderChange();
+}
+
+void ofApp::onKickNChange(int& n) {
+    onSliderChange();
+}
+
+void ofApp::onSnareKChange(int& k) {
+    onSliderChange();
+}
+
+void ofApp::onSnareNChange(int& n) {
+    onSliderChange();
+}
+
+void ofApp::onHihatKChange(int& k) {
+    onSliderChange();
+}
+
+void ofApp::onHihatNChange(int& n) {
+    onSliderChange();
+}
+
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){

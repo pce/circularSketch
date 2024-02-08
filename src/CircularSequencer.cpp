@@ -15,27 +15,31 @@ CircularSequencer::CircularSequencer()
         Track track;
         track.steps.resize(totalSteps, false);
         tracks.push_back(track);
+        rhythms.push_back(std::vector<bool>(totalSteps, false)); // Initialize rhythm vectors
     }
 }
+
 
 CircularSequencer::CircularSequencer(int totalSteps, ofPoint center, float radius)
 : totalSteps(totalSteps), center(center), radius(radius) {
-    // Initialize tracks with the specified number of steps
-    for (int i = 0; i < 3; ++i) { // 3 tracks: Kick, Snare, HiHat
+    // Initialize tracks and rhythms with the specified number of steps
+    for (int i = 0; i < 3; ++i) { // Assuming 3 tracks for Kick, Snare, HiHat
         Track track;
         track.steps.resize(totalSteps, false);
         tracks.push_back(track);
+        rhythms.push_back(std::vector<bool>(totalSteps, false)); // Initialize rhythm vectors
     }
 }
-
 
 
 void CircularSequencer::setup(float x, float y, float radius) {
     // Set up your sequencer (position, size, etc.)
 }
+
 void CircularSequencer::setup() {
     // Set up your sequencer (position, size, etc.)
 }
+
 void CircularSequencer::setup(const std::vector<ofSoundPlayer*>& soundPlayers) {
     sounds = soundPlayers; // Assume the size of soundPlayers matches the number of tracks
 }
@@ -98,12 +102,84 @@ void CircularSequencer::update() {
     float currentTime = ofGetElapsedTimef();
     if (currentTime - lastStepTime >= stepDuration) {
         for (int trackIndex = 0; trackIndex < tracks.size(); ++trackIndex) {
-            if (tracks[trackIndex].steps[currentStep] && sounds[trackIndex] != nullptr) {
+            
+            if (trackIndex >= 0 && trackIndex < tracks.size() &&  tracks[trackIndex].steps[currentStep] && sounds[trackIndex] != nullptr) {
                 sounds[trackIndex]->play(); // Play the sound for the active step
             }
         }
 
         currentStep = (currentStep + 1) % totalSteps;
         lastStepTime = currentTime;
-    }}
+    }
+}
+
+void CircularSequencer::updateRhythm(int track, int k, int n) {
+    if (track < 0 || track >= tracks.size()) return;
+
+    // Generate the new rhythm
+    std::vector<bool> newRhythm = generateEuclideanRhythm(k, n);
+
+    // Resize the track steps vector if necessary
+    if (tracks[track].steps.size() != totalSteps) {
+        tracks[track].steps.resize(totalSteps, false);
+    }
+
+    // Update the corresponding track's steps with the new rhythm
+    int stepsToUpdate = std::min(n, totalSteps); // Ensure we don't go out of bounds
+    for (int i = 0; i < stepsToUpdate; ++i) {
+        tracks[track].steps[i] = newRhythm[i];
+    }
+
+    // Fill the remaining steps with false if the new rhythm is shorter than the total steps
+    for (int i = stepsToUpdate; i < totalSteps; ++i) {
+        tracks[track].steps[i] = false;
+    }
+}
+
+
+
+std::vector<bool> CircularSequencer::generateEuclideanRhythm(int k, int n) {
+    std::vector<std::vector<bool>> buckets(n, std::vector<bool>());
+
+    for (int i = 0; i < k; ++i) {
+        buckets[i].push_back(true); // Fill the first k buckets with a "one"
+    }
+
+    int ticks = 0;
+    while (true) {
+        ticks++;
+        bool emptyBucket = false;
+        for (int i = 0; i < n; ++i) {
+            if (buckets[i].empty()) {
+                emptyBucket = true;
+                break;
+            }
+        }
+
+        if (emptyBucket) break;
+
+        std::vector<bool> firstNotEmptyBucket = buckets[0];
+        for (int i = 0; i < n - 1; ++i) {
+            buckets[i] = buckets[i + 1];
+        }
+        buckets[n - 1].clear();
+
+        for (bool pulse : firstNotEmptyBucket) {
+            buckets[n - 1].push_back(pulse);
+        }
+        
+        if (ticks > 1000) {
+            break;
+        }
+    }
+
+    std::vector<bool> rhythm;
+    for (auto& bucket : buckets) {
+        rhythm.insert(rhythm.end(), bucket.begin(), bucket.end());
+    }
+
+    return rhythm;
+}
+
+
 

@@ -38,4 +38,23 @@ class ofApp : public ofBaseApp{
         ofSoundPlayer melodySound;
         ofSoundPlayer chordSound;
 
+    
+        ofxPanel gui;
+        ofxIntSlider kickK, kickN; // Euclidean parameters for kick
+        ofxIntSlider snareK, snareN; // Euclidean parameters for snare
+        ofxIntSlider hihatK, hihatN; // Euclidean parameters for hi-hat
+    
+        // debouce Update rhythm (not beatSequencer.updateRhythm(0, k, kickN))
+        void onSliderChange();
+        void onKickKChange(int& k);
+        void onKickNChange(int& n);
+        void onSnareKChange(int& k);
+        void onSnareNChange(int& n);
+        void onHihatKChange(int& k);
+        void onHihatNChange(int& n);
+
+        float lastSliderAdjustmentTime = 0; // Timestamp of the last slider adjustment
+        bool updatePending = false; // Whether a rhythm update is pending
+        const float debounceDelay = 0.5; // Debounce delay in seconds
+
 };
