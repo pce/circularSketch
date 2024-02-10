@@ -3,15 +3,19 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 
+    // Beat Sequencer
     kickSound.load("kick.wav");
     snareSound.load("snare.wav");
     hihatSound.load("hihat.wav");
     openHihatSound.load("openhihat.wav");
     rimSound.load("rim.wav");
-    
-    
+        
     // Assuming a sequencer with 16 steps, centered at (ofGetWidth() / 2, ofGetHeight() / 2), with a radius of 100
-    beatSequencer = CircularSequencer(16, ofPoint(ofGetWidth() / 2, ofGetHeight() / 2), 100);
+    
+    drumSequencerPosition = ofPoint(ofGetWidth() / 2, ofGetHeight() / 2);
+    drumRadius = 100;
+    
+    drumSequencer = DrumSequencer(16);
 
     std::vector<ofSoundPlayer*> soundPlayers = { &kickSound, &snareSound, &hihatSound };
     beatSequencer.setup(soundPlayers);
@@ -32,6 +36,12 @@ void ofApp::setup(){
         beatSequencer.setStep(2, i, true);
     }
         
+    // Chord Sequencer setup
+    ofPoint chordSequencerCenter(padding + chordSequencerRadius, padding + chordSequencerRadius);
+    chordSequencer = CircularSequencer(16, chordSequencerCenter, chordSequencerRadius);
+    chordSequencer.setup(soundPlayers); // Assuming same soundPlayers can be used or set up accordingly
+
+    
     gui.setup("Euclidean Rhythms");
     gui.add(kickK.setup("Kick K", 1, 1, 16)); // Default value, min, max
     gui.add(kickN.setup("Kick N", 8, 1, 16));
@@ -54,21 +64,23 @@ void ofApp::update(){
     float currentTime = ofGetElapsedTimef();
     if (updatePending && currentTime - lastSliderAdjustmentTime > debounceDelay) {
         // Perform rhythm updates for all tracks
-        beatSequencer.updateRhythm(0, kickK, kickN); // For kick
-        beatSequencer.updateRhythm(1, snareK, snareN); // For snare
-        beatSequencer.updateRhythm(2, hihatK, hihatN); // For hi-hat
+        drumSequencer.updateRhythm(0, kickK, kickN); // For kick
+        drumSequencer.updateRhythm(1, snareK, snareN); // For snare
+        drumSequencer.updateRhythm(2, hihatK, hihatN); // For hi-hat
 
         updatePending = false; // Reset the flag
     }
-    beatSequencer.update();
+    drumSequencer.update();
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    beatSequencer.draw();
-    chordSequencer.draw();
-    bassSequencer.draw();
-    melodySequencer.draw();
+    
+    drumSequencerView.draw(drumSequencer, drumSequencerPosition, drumRadius);
+    chordSequencerView.draw(chordSequencer, chordSequencerPosition, chordRadius);
+
+//    bassSequencer.draw();
+//    melodySequencer.draw();
     
     gui.draw();
 }
@@ -161,11 +173,6 @@ void ofApp::mouseExited(int x, int y){
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-
-}
-
-//--------------------------------------------------------------
 void ofApp::gotMessage(ofMessage msg){
 
 }
@@ -173,4 +180,11 @@ void ofApp::gotMessage(ofMessage msg){
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo){ 
 
+}
+
+//--------------------------------------------------------------
+void ofApp::windowResized(int w, int h){
+    // Update sequencer position using chordSequencerRadius and padding
+    ofPoint chordSequencerCenter(padding + chordSequencerRadius, padding + chordSequencerRadius);
+    chordSequencer.setPosition(chordSequencerCenter);
 }

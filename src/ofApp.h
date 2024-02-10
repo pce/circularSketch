@@ -1,7 +1,9 @@
 #pragma once
 
 #include "ofMain.h"
-#include "CircularSequencer.hpp"
+#include "CircularSequencerView.hpp"
+#include "DrumSequencer.hpp"
+#include "ChordSequencer.hpp"
 
 class ofApp : public ofBaseApp{
 
@@ -25,11 +27,24 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg) override;
     
     private:
+    
+        DrumSequencer drumSequencer;
+        ChordSequencer chordSequencer;
+        // BassSequencer bassSequencer;
+        // MelodySequencer melodySequencer;
 
-        CircularSequencer beatSequencer;
-        CircularSequencer chordSequencer;
-        CircularSequencer bassSequencer;
-        CircularSequencer melodySequencer;
+        CircularSequencerView drumSequencerView;
+        CircularSequencerView chordSequencerView;
+        // CircularSequencerView bassSequencerView;
+        // CircularSequencerView melodySequencerView;
+
+        ofPoint drumSequencerPosition; // Position for the drum sequencer view
+        ofPoint chordSequencerPosition; // Position for the chord sequencer view
+
+    
+        float chordSequencerRadius = 100; // Radius of the chord sequencer, adjustable at runtime
+        float padding = 10; // Padding from the edge, adjustable at runtime
+
 
         // beat sequencer
         ofSoundPlayer kickSound, snareSound, hihatSound, openHihatSound, rimSound;
