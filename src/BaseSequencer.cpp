@@ -7,27 +7,13 @@
 
 #include "BaseSequencer.hpp"
 
-BaseSequencer::BaseSequencer(int totalSteps, ofPoint center, float radius)
-: totalSteps(totalSteps), center(center), radius(radius) {
-    // Initialize tracks and rhythms with the specified number of steps
-    //    for (int i = 0; i < 3; ++i) { // Assuming 3 tracks for Kick, Snare, HiHat
-    //        Track track;
-    //        track.steps.resize(totalSteps, false);
-    //        tracks.push_back(track);
-    //        rhythms.push_back(std::vector<bool>(totalSteps, false)); // Initialize rhythm vectors
-    //    }
-}
+//BaseSequencer::BaseSequencer(int totalSteps): totalSteps(totalSteps) {}
 
 
 void BaseSequencer::setBPM(int bpm) {
     this->bpm = bpm;
     stepDuration = 60.0 / (bpm * 4); // Calculate step duration based on BPM
 }
-
-bool BaseSequencer::isSequencerRunning() const {
-    return this->isRunning;    
-}
-
 
 
 std::vector<bool> BaseSequencer::generateEuclideanRhythm(int k, int n) {

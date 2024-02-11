@@ -4,6 +4,7 @@
 #include "CircularSequencerView.hpp"
 #include "DrumSequencer.hpp"
 #include "ChordSequencer.hpp"
+#include "ofxGui.h"
 
 class ofApp : public ofBaseApp{
 
@@ -41,8 +42,10 @@ class ofApp : public ofBaseApp{
         ofPoint drumSequencerPosition; // Position for the drum sequencer view
         ofPoint chordSequencerPosition; // Position for the chord sequencer view
 
-    
-        float chordSequencerRadius = 100; // Radius of the chord sequencer, adjustable at runtime
+        // Radius of the sequencers, adjustable at runtime
+        float drumSequencerRadius = 100;
+        float chordSequencerRadius = 100;
+
         float padding = 10; // Padding from the edge, adjustable at runtime
 
 

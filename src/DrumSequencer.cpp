@@ -7,18 +7,6 @@
 
 #include "DrumSequencer.hpp"
 
-/*
-DrumSequencer::DrumSequencer()
-: totalSteps(16), center(ofPoint(0, 0)), radius(100) {
-    // Initialize tracks with the default number of steps
-    for (int i = 0; i < 3; ++i) { // 3 tracks: Kick, Snare, HiHat
-        Track track;
-        track.steps.resize(totalSteps, false);
-        tracks.push_back(track);
-        rhythms.push_back(std::vector<bool>(totalSteps, false)); // Initialize rhythm vectors
-    }
-}
-*/
 
 DrumSequencer::DrumSequencer()
 : BaseSequencer(16) {
@@ -33,19 +21,20 @@ DrumSequencer::DrumSequencer(int totalSteps)
         track.steps.resize(totalSteps, false);
         tracks.push_back(track);
         // rhythms.push_back(std::vector<bool>(totalSteps, false));
-        
     }
     // Initialize rhythm vectors
     for (int i = 0; i < numberOfTracks; ++i) {
-        std::vector<bool> rhythm(totalSteps, false); // Initialize a rhythm pattern with all 'false'
+        std::vector<bool> rhythm(totalSteps, false);
         rhythms.push_back(rhythm);
     }
     
 }
 
+
 void DrumSequencer::setup(const std::vector<ofSoundPlayer*>& soundPlayers) {
-    sounds = soundPlayers; // Assume the size of soundPlayers matches the number of tracks
+    sounds = soundPlayers; // Store the provided sound player pointers
 }
+
 
 void DrumSequencer::setStep(int track, int step, bool active) {
     if (track >= 0 && track < tracks.size() && step >= 0 && step < totalSteps) {
@@ -54,15 +43,8 @@ void DrumSequencer::setStep(int track, int step, bool active) {
 }
 
 
-void DrumSequencer::mousePressed(int x, int y) {
-    // Check if the click is within the toggle button
-    if (ofDist(x, y, toggleButtonCenter.x, toggleButtonCenter.y) <= toggleButtonRadius) {
-        isRunning = !isRunning; // Toggle the run state
-    }
-}
-
 void DrumSequencer::update() {
-    if (!isRunning) return;
+    if (!isRunning()) return;
 
     float currentTime = ofGetElapsedTimef();
     if (currentTime - lastStepTime >= stepDuration) {
@@ -101,20 +83,9 @@ void DrumSequencer::updateRhythm(int track, int k, int n) {
     }
 }
 
-
-
-int DrumSequencer::getTotalSteps() const {
-    return this->totalSteps;
-}
-
 bool DrumSequencer::getStepState(int track, int step) const {
-    // Assuming 'tracks' is a vector of Track objects and each Track has a 'steps' vector<bool>
-    return this->tracks[track].steps[step];
+    if (track >= 0 && track < tracks.size() && step >= 0 && step < totalSteps) {
+        return tracks[track].steps[step];
+    }
+    return false; // Return false or handle error for out-of-bounds access
 }
-
-int DrumSequencer::getCurrentStep() const {
-    return this->currentStep; // Assuming 'currentStep' tracks the current step
-}
-
-
-

@@ -30,6 +30,6 @@ void CircularSequencerView::draw(const BaseSequencer& sequencer, ofPoint center,
     }
 
     // Draw toggle button based on sequencer's running state
-    ofSetColor(sequencer.isSequencerRunning() ? ofColor::green : ofColor::red);
+    ofSetColor(sequencer.isRunning() ? ofColor::green : ofColor::red);
     ofDrawCircle(center, 10); // Use a fixed radius for the toggle button, adjust as needed
 }

@@ -15,6 +15,8 @@ class CircularSequencerView {
 public:
     void draw(const BaseSequencer& sequencer, ofPoint center, float radius);
     // bool checkIntersection(BaseSequencer other);
+    void mousePressed(int x, int y);
+
 };
 
 #endif /* CircularSequencerView_hpp */

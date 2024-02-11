@@ -1,32 +1,33 @@
-//
-//  ChordSequencer.hpp
-//  circularSketch
-//
-//  Created by pce on 08.02.24.
-//
-
 #ifndef ChordSequencer_hpp
 #define ChordSequencer_hpp
 
-#include <stdio.h>
 #include "BaseSequencer.hpp"
 
 class ChordSequencer : public BaseSequencer {
 public:
-    using BaseSequencer::BaseSequencer; // Inherit constructors
-    void setup(ofSoundPlayer* soundPlayer); // Setup with a single sound player
-    void update() override; // Override to handle pitch adjustments
-    void setPitch(int step, float pitch); // Method to adjust pitch for a step
+    ChordSequencer();
+    ChordSequencer(int totalSteps);
+//    using BaseSequencer::BaseSequencer;
+    virtual ~ChordSequencer() noexcept = default;
+    void setup(const std::vector<ofSoundPlayer*>& soundPlayers);
+    // pitch adjustment for a step
+    void setPitch(int step, float pitch);
+    float getPitch(int step) const;
 
-    int getTotalSteps() const override;
+    void setStep(int track, int step, bool active) override;
+    void update() override;
+
+    int getTotalSteps() const override { return BaseSequencer::getTotalSteps(); }
     bool getStepState(int track, int step) const override;
-    int getCurrentStep() const override;
-    int getNumberOfTracks() const override;
-    
-private:
-    ofSoundPlayer* sound = nullptr;
-    std::vector<float> pitches; // Store pitch adjustments for each step
-};
+    int getCurrentStep() const override { return currentStep; }
+    int getNumberOfTracks() const override { return tracks.size(); }
 
+private:
+    std::vector<float> pitches;
+    std::vector<ofSoundPlayer*> sounds;
+    int currentStep = 0;
+    int numberOfTracks = 1;
+    float lastUpdateTime = 0;
+};
 
 #endif /* ChordSequencer_hpp */

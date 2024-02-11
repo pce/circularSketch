@@ -7,13 +7,30 @@
 
 #include "ChordSequencer.hpp"
 
-ChordSequencer::ChordSequencer(int totalSteps, ofPoint center, float radius)
-: totalSteps(totalSteps), center(center), radius(radius) {
-    // Initialization code for BaseSequencer...
+
+ChordSequencer::ChordSequencer()
+: BaseSequencer(16) {
 }
 
-int ChordSequencer::getTotalSteps() const {
-    return this->totalSteps;
+ChordSequencer::ChordSequencer(int totalSteps) : BaseSequencer(totalSteps) {
+    // Initialize tracks and other necessary members
+    for (int i = 0; i < numberOfTracks; ++i) {
+        Track track;
+        track.steps.resize(totalSteps, false);
+        tracks.push_back(track);
+    }
+    // Initialize pitch vectors or other necessary members
+}
+
+void ChordSequencer::setup(const std::vector<ofSoundPlayer*>& soundPlayers) {
+    sounds = soundPlayers; // Store the provided sound player pointers
+}
+
+
+void ChordSequencer::setStep(int track, int step, bool active) {
+    if (track >= 0 && track < tracks.size() && step >= 0 && step < totalSteps) {
+        tracks[track].steps[step] = active;
+    }
 }
 
 bool ChordSequencer::getStepState(int track, int step) const {
@@ -21,12 +38,15 @@ bool ChordSequencer::getStepState(int track, int step) const {
     return this->tracks[track].steps[step];
 }
 
-int ChordSequencer::getNumberOfTracks() const {
-    return this->tracks.size();
+
+void ChordSequencer::update() {
+    // Example implementation
+    if (!isRunning()) return;
+
+    float currentTime = ofGetElapsedTimeMillis() / 1000.0; // Assuming a function to get elapsed time in seconds
+    if (currentTime - lastUpdateTime >= stepDuration) {
+        // Update logic here
+        currentStep = (currentStep + 1) % totalSteps;
+        lastUpdateTime = currentTime;
+    }
 }
-
-
-int ChordSequencer::getCurrentStep() const {
-    return this->currentStep; // Assuming 'currentStep' tracks the current step
-}
-

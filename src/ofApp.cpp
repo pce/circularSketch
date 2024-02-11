@@ -1,5 +1,8 @@
 #include "ofApp.h"
 
+
+// opApp is the ViewModel
+
 //--------------------------------------------------------------
 void ofApp::setup(){
 
@@ -13,34 +16,36 @@ void ofApp::setup(){
     // Assuming a sequencer with 16 steps, centered at (ofGetWidth() / 2, ofGetHeight() / 2), with a radius of 100
     
     drumSequencerPosition = ofPoint(ofGetWidth() / 2, ofGetHeight() / 2);
-    drumRadius = 100;
+    int drumRadius = 100;
     
     drumSequencer = DrumSequencer(16);
 
     std::vector<ofSoundPlayer*> soundPlayers = { &kickSound, &snareSound, &hihatSound };
-    beatSequencer.setup(soundPlayers);
+    drumSequencer.setup(soundPlayers);
     
-    beatSequencer.setBPM(130);
+    drumSequencer.setBPM(130);
     
     // Set up steps for each track
     // Kick: 1,0,0,0,1,0,0,0,1 ...
-    beatSequencer.setStep(0, 0, true);
-    beatSequencer.setStep(0, 4, true);
-    beatSequencer.setStep(0, 8, true);
+    drumSequencer.setStep(0, 0, true);
+    drumSequencer.setStep(0, 4, true);
+    drumSequencer.setStep(0, 8, true);
 
     // Snare: 0,0,0,0,1,0,0,0,0 ...
-    beatSequencer.setStep(1, 4, true);
+    drumSequencer.setStep(1, 4, true);
 
     // HiHat: 0,0,1,0,0, ...
     for (int i = 2; i < 16; i += 2) {
-        beatSequencer.setStep(2, i, true);
+        drumSequencer.setStep(2, i, true);
     }
         
-    // Chord Sequencer setup
-    ofPoint chordSequencerCenter(padding + chordSequencerRadius, padding + chordSequencerRadius);
-    chordSequencer = CircularSequencer(16, chordSequencerCenter, chordSequencerRadius);
-    chordSequencer.setup(soundPlayers); // Assuming same soundPlayers can be used or set up accordingly
+    // Chord Sequencer setup    
+    chordSequencerPosition = ofPoint(padding + chordSequencerRadius, padding + chordSequencerRadius);
+    chordSequencer = ChordSequencer(16);  // Assuming ChordSequencer has a constructor taking the total steps
+    //    chordSequencer.setup(&chordSound);  // Assuming setup for a single sound player
+//    chordSequencer.setup(soundPlayers);
 
+    
     
     gui.setup("Euclidean Rhythms");
     gui.add(kickK.setup("Kick K", 1, 1, 16)); // Default value, min, max
@@ -76,8 +81,8 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     
-    drumSequencerView.draw(drumSequencer, drumSequencerPosition, drumRadius);
-    chordSequencerView.draw(chordSequencer, chordSequencerPosition, chordRadius);
+    drumSequencerView.draw(drumSequencer, drumSequencerPosition, drumSequencerRadius);
+    chordSequencerView.draw(chordSequencer, chordSequencerPosition, chordSequencerRadius);
 
 //    bassSequencer.draw();
 //    melodySequencer.draw();
@@ -149,7 +154,19 @@ void ofApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-    beatSequencer.mousePressed(x, y);
+    
+    // beatSequencer.
+    //    if (ofDist(x, y, toggleButtonCenter.x, toggleButtonCenter.y) <= toggleButtonRadius) {
+    //        isRunning = !isRunning; // Toggle the run state
+    //    }
+    
+    int toggleButtonRadius = 10;
+    // Example: Checking if the mouse click is within a circular toggle button at the center of the drum sequencer
+    float distance = ofDist(x, y, drumSequencerPosition.x, drumSequencerPosition.y);
+    if (distance <= toggleButtonRadius) {
+        drumSequencer.setRunning(!drumSequencer.isRunning());
+    }
+
 }
 
 //--------------------------------------------------------------
@@ -185,6 +202,7 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h){
     // Update sequencer position using chordSequencerRadius and padding
-    ofPoint chordSequencerCenter(padding + chordSequencerRadius, padding + chordSequencerRadius);
-    chordSequencer.setPosition(chordSequencerCenter);
+//    ofPoint chordSequencerCenter(padding + chordSequencerRadius, padding + chordSequencerRadius);
+//    drumSequencerView.setPosition(chordSequencerCenter);
+//    chordSequencerView.setPosition(chordSequencerCenter);
 }
