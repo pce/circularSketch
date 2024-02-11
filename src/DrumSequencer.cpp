@@ -60,6 +60,26 @@ void DrumSequencer::update() {
     }
 }
 
+/*
+void DrumSequencer::updateRhythm(int track, int k, int n) {
+    if (track < 0 || track >= tracks.size()) return;
+
+    // Simplified rhythm for debugging
+    std::vector<bool> debugRhythm = {true, false, true, false}; // Simple pattern
+
+    // Ensure we don't go out of bounds
+    int stepsToUpdate = std::min(static_cast<int>(debugRhythm.size()), totalSteps);
+    for (int i = 0; i < stepsToUpdate; ++i) {
+        tracks[track].steps[i] = debugRhythm[i];
+    }
+
+    // Fill the rest with false
+    for (int i = stepsToUpdate; i < totalSteps; ++i) {
+        tracks[track].steps[i] = false;
+    }
+}
+*/
+
 void DrumSequencer::updateRhythm(int track, int k, int n) {
     if (track < 0 || track >= tracks.size()) return;
 
@@ -82,6 +102,8 @@ void DrumSequencer::updateRhythm(int track, int k, int n) {
         tracks[track].steps[i] = false;
     }
 }
+
+
 
 bool DrumSequencer::getStepState(int track, int step) const {
     if (track >= 0 && track < tracks.size() && step >= 0 && step < totalSteps) {

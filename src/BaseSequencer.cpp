@@ -15,7 +15,20 @@ void BaseSequencer::setBPM(int bpm) {
     stepDuration = 60.0 / (bpm * 4); // Calculate step duration based on BPM
 }
 
+std::vector<bool> BaseSequencer::generateEuclideanRhythm(int k, int n) {
+    std::vector<bool> rhythm(n, false);
 
+    if (n <= 0 || k < 0 || k > n) return rhythm; // Validate inputs
+
+    for (int i = 0; i < k; ++i) {
+        int index = static_cast<int>(static_cast<double>(i) / k * n);
+        rhythm[index] = true;
+    }
+
+    return rhythm;
+}
+
+/*
 std::vector<bool> BaseSequencer::generateEuclideanRhythm(int k, int n) {
     std::vector<std::vector<bool>> buckets(n, std::vector<bool>());
 
@@ -58,4 +71,4 @@ std::vector<bool> BaseSequencer::generateEuclideanRhythm(int k, int n) {
 
     return rhythm;
 }
-
+*/
